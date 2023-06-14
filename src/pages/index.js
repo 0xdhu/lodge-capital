@@ -38,21 +38,21 @@ export default function Home() {
     abi: DuesPresaleABI,
     functionName: "getRoundDeposits",
     chainId: 42161,
-    watch: true,
+    // watch: true,
     onSuccess(data) {
       console.log("Success", data);
     },
   });
-  // const ContractRead1 = useContractRead({
-  //   address: "0xc232db797D048B9e3e28B71F78d996E04B5aC2a9",
-  //   abi: LevelPresaleABI,
-  //   functionName: "getRoundDeposits",
-  //   chainId: 42161,
-  //   watch: true,
-  //   onSuccess(data1) {
-  //     console.log("Success", data1);
-  //   },
-  // });
+  const ContractRead1 = useContractRead({
+    address: "0xc232db797D048B9e3e28B71F78d996E04B5aC2a9",
+    abi: LevelPresaleABI,
+    functionName: "getRoundDeposits",
+    chainId: 42161,
+    // watch: true,
+    onSuccess(data1) {
+      console.log("Success", data1);
+    },
+  });
   const unwatch = watchBlockNumber(
     {
       chainId: 42161,
@@ -60,20 +60,20 @@ export default function Home() {
     (blockNumber) => console.log(blockNumber)
   );
 
-  // async function updateUI() {
-  //   if (!ContractRead || !ContractRead.data) {
-  //     return;
-  //   }
-  //   if (!ContractRead1 || !ContractRead1.data) {
-  //     return;
-  //   }
-  //   const rdep = ContractRead.data.toString();
-  //   const rdep1 = ContractRead1.data.toString();
-  //   setLevelSold(rdep1);
-  //   setDuesSold(rdep);
-  // }
+  async function updateUI() {
+    if (!ContractRead || !ContractRead.data) {
+      return;
+    }
+    if (!ContractRead1 || !ContractRead1.data) {
+      return;
+    }
+    const rdep = ContractRead.data.toString();
+    const rdep1 = ContractRead1.data.toString();
+    setLevelSold(rdep1);
+    setDuesSold(rdep);
+  }
   useEffect(() => {
-    // updateUI();
+    updateUI();
   }, [unwatch]);
 
   return (
@@ -90,7 +90,7 @@ export default function Home() {
           rel="stylesheet"
         ></link>
       </Head>
-      {/* <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] font-Montserrat  w-screen h-100% min-h-screen  bg-no-repeat bg-cover bg-center bg-fixed">
+      <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] font-Montserrat  w-screen h-100% min-h-screen  bg-no-repeat bg-cover bg-center bg-fixed">
         <ExampleHeader /> <ExampleCA /> <Modal />
         <div className="  text-white md:grid grid-cols-12 grid-rows-6 gap-4 text-center">
           <h1 className=" col-span-12 row-span-1  row-start-2 inline-flex flex-auto    text-center justify-center text-2xl sm:text-6xl font-lodge">
@@ -207,7 +207,7 @@ export default function Home() {
         </div>
         <CallToAction className="overflow-hidden" />
         <ExampleFF className="sticky top-[100vh]" /> 
-      </main> */}
+      </main> {/* */}
     </>
   );
 }

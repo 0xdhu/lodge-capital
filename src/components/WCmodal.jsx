@@ -138,9 +138,9 @@ export default function WildCardModal() {
     updateUI();
   }, [unwatch]);
 
-
+  // {console.log(config)}{console.log(error)} 
   return (
-    <> {console.log(config)}{console.log(error)} <button
+    <> <button
     type="button"
     onClick={handleOpen}
     className="inline-flex h-16 bg-white items-center focus:ring-black  flex-auto justify-center z-20 row-start-6 md:col-start-6 col-start-5 col-span-4 md:col-span-2 px-1 md:px-6 py-3 border-4 hover:animate-spin-slower hover:bg-black hover:text-white transition duration-300 ease-in-out border-white  text-base font-medium rounded-2xl shadow-sm text-black   focus:outline-none focus:ring-2 focus:ring-offset-2  "

@@ -14,7 +14,7 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 
 let { chains, provider } = configureChains(
   [arbitrum, bsc, arbitrumGoerli],
-  [alchemyProvider({ apiKey: "an api key" }), publicProvider()]
+  [alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY }), publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
