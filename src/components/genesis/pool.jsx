@@ -144,9 +144,9 @@ const GenesisPool = ({
     }
 
     useEffect(() => {
-        // if (refresh > 0) {
+        if (refresh > 0) {
             updateUI();
-        // }
+        }
     }, [refresh, tokenPrice]);
 
     useEffect(() => {
@@ -189,7 +189,7 @@ const GenesisPool = ({
                 claimWriteAsync={claimWriteAsync}
             />
         )
-    }, [nativePrice, ethPrice, tokenAllocation, totalAllocation, tokenTVL, tokenPrice, pendingToken])
+    }, [nativePrice, ethPrice, tokenAllocation, totalAllocation, userToken, tokenTVL, tokenPrice, pendingToken])
     return (
         <PanelRow />
     )
