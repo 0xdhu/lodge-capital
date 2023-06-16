@@ -80,7 +80,7 @@ export default function Example() {
         </p>
         <div className="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {tiers.map((tier) => (
-            <div class=" card inline-block animate-border rounded-3xl bg-white bg-gradient-to-r from-black via-gray-500 to-white bg-[length:400%_400%] p-1 shadow-lg transition focus:outline-none focus:ring">
+            <div className=" card inline-block animate-border rounded-3xl bg-white bg-gradient-to-r from-black via-gray-500 to-white bg-[length:400%_400%] p-1 shadow-lg transition focus:outline-none focus:ring">
             <div
               key={tier.id}
               className={classNames(

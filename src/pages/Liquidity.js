@@ -427,7 +427,7 @@ export default function Masonry() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main class="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] bg-black w-screen h-100%  bg-no-repeat bg-cover bg-center   min-h-screen ">
+      <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] bg-black w-screen h-100%  bg-no-repeat bg-cover bg-center   min-h-screen ">
         <ExampleHeader className="z-20" /> <ExampleCA className="z-50" />
         <div className="flex   min-h-full flex-col mt-8 ">
           {console.log(supplyConfig.data + "sddsadas")}
@@ -603,9 +603,9 @@ export default function Masonry() {
                     />
                   </div>
                 </div>
-                <div class=" inline-flex  text-center justify-center items-center justify-self-center">
+                <div className=" inline-flex  text-center justify-center items-center justify-self-center">
                   <img
-                    class="text-center h-36  rounded-full"
+                    className="text-center h-36  rounded-full"
                     src={
                       "https://media.tenor.com/9SQD7cT_c2sAAAAd/lodgecapital.gif"
                     }
@@ -766,9 +766,9 @@ export default function Masonry() {
                     You'll get 0.00 ETH
                   </div>
                 </div>
-                <div class=" inline-flex  text-center justify-center items-center justify-self-center">
+                <div className=" inline-flex  text-center justify-center items-center justify-self-center">
                   <img
-                    class="text-center h-36  rounded-full"
+                    className="text-center h-36  rounded-full"
                     src={
                       "https://media.tenor.com/9SQD7cT_c2sAAAAd/lodgecapital.gif"
                     }

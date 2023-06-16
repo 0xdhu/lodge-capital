@@ -140,7 +140,7 @@ export default function Claim() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main class="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] w-screen  min-h-screen  bg-no-repeat bg-cover bg-center ">
+      <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] w-screen  min-h-screen  bg-no-repeat bg-cover bg-center ">
         <ExampleHeader />
 
         <div className="text-white  flex flex-col ">
@@ -152,9 +152,9 @@ export default function Claim() {
           <div className=" mx-8 rounded-xl text-black self-center px-12 opacity-70 sm:px-40 pb-20 mb-20 text-center flex-auto bg-white  ">
             {" "}
             <div className="text-lg m-2">
-              <div class=" text-center content-center items-center place-self-center inline-flex justify-center">
+              <div className=" text-center content-center items-center place-self-center inline-flex justify-center">
                 <img
-                  class="text-center h-24 bg-white rounded-full"
+                  className="text-center h-24 bg-white rounded-full"
                   src={
                     "https://media.tenor.com/9SQD7cT_c2sAAAAd/lodgecapital.gif?speed=0"
                   }

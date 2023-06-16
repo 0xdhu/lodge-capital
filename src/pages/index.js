@@ -192,7 +192,7 @@ export default function Home() {
 
           <MyModal></MyModal>
           <WildCardModal></WildCardModal>
-          <LevelModal></LevelModal>
+          {/* <LevelModal></LevelModal> */}
 
           <div className="row-start-7  col-start-1 col-span-12 text-white text-2xl sm:text-5xl text-center">
             {" "}

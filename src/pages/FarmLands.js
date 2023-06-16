@@ -477,7 +477,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -563,7 +563,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -647,7 +647,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }

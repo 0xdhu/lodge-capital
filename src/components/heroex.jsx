@@ -53,8 +53,8 @@ export default function ExampleH() {
         
       </div>
       <main>
-      <div class="m-10 flex items-center justify-center ">
-      <Image class=" absolute  " src={logo} width={800} height={200}></Image>
+      <div className="m-10 flex items-center justify-center ">
+      <Image className=" absolute  " src={logo} width={800} height={200}></Image>
 </div>
       
         <div className="relative px-6 lg:px-8">

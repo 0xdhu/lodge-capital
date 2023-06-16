@@ -160,7 +160,7 @@ export default function MyModal() {
     <> {console.log(`HERE ${error}`)} <button
     type="button"
     onClick={handleOpen}
-    className="bg-white   h-16 col-start-2 col-span-3  md:col-span-2 focus:ring-black row-start-6 z-20 md:col-start-4 inline-flex flex-auto justify-center items-center px-1 md:px-6 py-3  border-4 border-white text-base font-medium rounded-2xl shadow-sm text-black  hover:bg-black hover:text-white transition duration-300 ease-in-out  focus:outline-none focus:ring-2 focus:ring-offset-2 "
+    className="bg-white h-16 col-start-2 col-span-3  md:col-span-2 focus:ring-black row-start-6 z-20 md:col-start-4 inline-flex flex-auto justify-center items-center px-1 md:px-6 py-3  border-4 border-white text-base font-medium rounded-2xl shadow-sm text-black  hover:bg-black hover:text-white transition duration-300 ease-in-out  focus:outline-none focus:ring-2 focus:ring-offset-2 "
   >
     BUY DUES
   </button>
@@ -193,7 +193,7 @@ export default function MyModal() {
                 <div className="relative transform overflow-hidden rounded-3xl bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all  sm:w-full sm:max-w-md sm:p-6"><div>
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-black">
                   <img
-                class=""
+                className=""
                 src={
                   "https://cdn.discordapp.com/attachments/943951700379721740/1076903599638057001/dues.png"
                 }/>

@@ -72,9 +72,9 @@ export default function WalletModal() {
     functionName: "getLevelOwned",
     chainId: 56,
     args:[address],
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      // console.log("Success", data);
     },
   });
   const ContractRead1 = useContractRead({
@@ -83,9 +83,9 @@ export default function WalletModal() {
     functionName: "duesOwned",
     chainId: 56,
     args:[address],
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      // console.log("Success", data);
     },
   });
   const ContractRead2 = useContractRead({
@@ -94,9 +94,9 @@ export default function WalletModal() {
     functionName: "duesOwnedV",
     chainId: 56,
     args:[address],
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      // console.log("Success", data);
     },
   });
   const ContractRead3 = useContractRead({
@@ -105,9 +105,9 @@ export default function WalletModal() {
     functionName: "balanceOf",
     chainId: 42161,
     args:[address],
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      // console.log("Success", data);
     },
   });
   const ContractRead4 = useContractRead({
@@ -116,9 +116,9 @@ export default function WalletModal() {
     functionName: "getLevelOwned",
     chainId: 42161,
     args:[address],
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      // console.log("Success", data);
     },
   });
 
@@ -128,18 +128,18 @@ export default function WalletModal() {
     functionName: "duesOwnedV",
     chainId: 42161,
     args:[address],
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      // console.log("Success", data);
     },
   });
   
-  const unwatch = watchBlockNumber(
-    {
-      chainId: 56,
-    },
-    (blockNumber) => console.log(blockNumber)
-  );
+  // const unwatch = watchBlockNumber(
+  //   {
+  //     chainId: 56,
+  //   },
+  //   (blockNumber) => console.log(blockNumber)
+  // );
 
   async function updateUI() {
     const rdep = (ContractRead.data||0).toString();
@@ -162,7 +162,7 @@ export default function WalletModal() {
  
   useEffect(() => {
     updateUI();
-  }, [unwatch]);
+  }, []); // unwatch
 
 
   return (

@@ -83,9 +83,9 @@ export default function DashBoard2() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main class="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] w-screen min-h-screen  bg-no-repeat bg-cover bg-center bg-fixed">
-        <div class="flex flex-wrap flex-col">
-          <ExampleHeader class="" />
+      <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] w-screen min-h-screen  bg-no-repeat bg-cover bg-center bg-fixed">
+        <div className="flex flex-wrap flex-col">
+          <ExampleHeader className="" />
 
           <div>
             <dl className="mt-5  sm:grid grid-cols-3 gap-5 sm:grid-cols-3 lg:grid-cols-3 bg-transparent">

@@ -112,12 +112,12 @@ export default function WildCardModal() {
     },
   });
   
-  const unwatch = watchBlockNumber(
-    {
-      chainId: 56,
-    },
-    (blockNumber) => console.log(blockNumber)
-  );
+  // const unwatch = watchBlockNumber(
+  //   {
+  //     chainId: 56,
+  //   },
+  //   (blockNumber) => console.log(blockNumber)
+  // );
 
   async function updateUI() {
     const rdep = (ContractRead.data||0).toString();
@@ -136,7 +136,7 @@ export default function WildCardModal() {
   }
   useEffect(() => {
     updateUI();
-  }, [unwatch]);
+  }, []);
 
   // {console.log(config)}{console.log(error)} 
   return (
@@ -176,7 +176,7 @@ export default function WildCardModal() {
                <div className="relative transform overflow-hidden rounded-3xl bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all  sm:w-full sm:max-w-md sm:p-6"> <div>
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-black">
                   <img
-                class=""
+                className=""
                 src={
                   "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                 }/>

@@ -180,7 +180,7 @@ export default function Zapper() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main class="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] w-screen  min-h-screen  bg-no-repeat bg-cover bg-center ">
+      <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] w-screen  min-h-screen  bg-no-repeat bg-cover bg-center ">
         <ExampleHeader />
 
         <div className="text-white  gap-6 lg:grid grid-cols-2 lg:grid-cols-12 grid-rows-1 lg:grid-rows-6 lg:gap-1">
@@ -192,9 +192,9 @@ export default function Zapper() {
           <div className=" rounded-xl text-black   flex-auto m-10 md:mx-60 lg:m-10 sm:mx-52 text-xl 2xl:col-start-3 2xl:col-span-3 lg:col-span-3 lg:col-start-3 row-start-3 row-span-3  text-center  bg-white  ">
             Input token
             <div className="text-lg m-2">
-              <div class=" inline-flex  text-center justify-center items-center justify-self-center">
+              <div className=" inline-flex  text-center justify-center items-center justify-self-center">
                 <img
-                  class="text-center h-24 bg-white rounded-full"
+                  className="text-center h-24 bg-white rounded-full"
                   src={
                     "https://media.tenor.com/9SQD7cT_c2sAAAAd/lodgecapital.gif"
                   }
@@ -268,9 +268,9 @@ export default function Zapper() {
           <div className="rounded-xl text-black  flex-auto   m-10 md:mx-60 lg:m-10 sm:mx-52 text-xl 2xl:col-start-8 2xl:col-span-3 lg:col-start-8 lg:col-span-3 row-start-3 row-span-3  text-center bg-white    ">
             Output token
             <div className="m-1">
-              <div class=" inline-flex  text-center justify-center items-center justify-self-center">
+              <div className=" inline-flex  text-center justify-center items-center justify-self-center">
                 <img
-                  class="text-center h-24 bg-white rounded-full"
+                  className="text-center h-24 bg-white rounded-full"
                   src={"https://media.tenor.com/1NNu4kkLgxoAAAAC/lodge.gif"}
                 />
               </div>

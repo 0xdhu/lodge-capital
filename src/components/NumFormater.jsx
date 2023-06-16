@@ -3,7 +3,7 @@ import React from 'react';
 function NumberFormat(props) {
   const formatNumber = (number) => {
     if (Math.abs(number) < 1000) {
-      return number.toString();
+      return Number(number).toFixed(3).toString();
     }
 
     const units = ['', 'k', 'm', 'b', 't'];

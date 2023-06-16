@@ -161,7 +161,7 @@ export default function MasonryWithdrawModal( ) {
                 <div className="relative transform overflow-hidden rounded-3xl bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all  sm:w-full sm:max-w-md sm:p-6"><div>
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-black">
                   <img
-                class=""
+                className=""
                 src={
                   "https://cdn.discordapp.com/attachments/943951700379721740/1076903599638057001/dues.png"
                 }/>

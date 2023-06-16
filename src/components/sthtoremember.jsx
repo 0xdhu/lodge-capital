@@ -420,7 +420,7 @@ export default function Masonry() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main class="bg-black min-h-screen font-Montserrat">
+      <main className="bg-black min-h-screen font-Montserrat">
         <ExampleHeader />
         <ExampleCA />
         <div className=" flex w-full mx-auto justify-between max-w-7xl mt-4 items-center gap-2 rounded-lg   py-2 text-left text-sm font-medium text-black focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75l">
@@ -475,7 +475,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -526,7 +526,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -576,7 +576,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -631,7 +631,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -686,7 +686,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }
@@ -741,7 +741,7 @@ export default function Masonry() {
               >
                 <div className="flex-auto flex-col">
                   <img
-                    class="w-16 "
+                    className="w-16 "
                     src={
                       "https://cdn.discordapp.com/attachments/943951700379721740/1072891751452381214/leve-icon.png"
                     }

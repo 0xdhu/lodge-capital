@@ -295,7 +295,7 @@ export default function Masonry() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main class="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] bg-black w-screen h-100%  bg-no-repeat bg-cover bg-center   min-h-screen ">
+      <main className="bg-[url('https://cdn.discordapp.com/attachments/943951700379721740/1075814264163541122/lodge-bg.png')] bg-black w-screen h-100%  bg-no-repeat bg-cover bg-center   min-h-screen ">
         <ExampleHeader className="z-20" /> <ExampleCA className="z-50" />
         <div className="flex   min-h-full flex-col mt-8 ">
           {/* 2 column wrapper */}
@@ -375,9 +375,9 @@ export default function Masonry() {
 
             <div className=" m-2 min-w-max rounded-xl justify-center items-center bg-opacity-70 max-w-4xl text-center bg-white px-4 py-6 sm:px-6 lg:pl-8 xl:w-96 xl:shrink-0  xl:pl-6">
               {/* Left column area */}
-              <div class=" inline-flex  text-center justify-center items-center justify-self-center">
+              <div className=" inline-flex  text-center justify-center items-center justify-self-center">
                 <img
-                  class="text-center h-24 bg-white rounded-full"
+                  className="text-center h-24 bg-white rounded-full"
                   src={
                     "https://media.tenor.com/9SQD7cT_c2sAAAAd/lodgecapital.gif"
                   }
