@@ -30,14 +30,7 @@ const StakingOverview = ({levelPriceInEth, lodgePriceInEth, ethPrice}) => {
                             (sumArray(pendingGenesisRewards)).toLocaleString()
                         }
                         <span className="text-base">
-                        {` ($${parseFloat(
-                            (pendingGenesisRewards.reduce((accumulator, currentValue) => {
-                                const a = parseFloat(accumulator) || 0;
-                                const b = parseFloat(currentValue) || 0;
-                                return isNaN(a) ? 0: a + isNaN(b) ? 0: b;
-                            }, 0)) *
-                            (levelPriceInEth * ethPrice)
-                        ).toLocaleString()})`}
+                        {` ($${(sumArray(pendingGenesisRewards) * (levelPriceInEth * ethPrice)).toLocaleString()})`}
                         </span>
                     </div>
 
@@ -47,14 +40,7 @@ const StakingOverview = ({levelPriceInEth, lodgePriceInEth, ethPrice}) => {
                             (sumArray(pendingFarmLandRewards)).toLocaleString()
                         }
                         <span className="text-base">
-                            {` ($${parseFloat(
-                                (pendingFarmLandRewards.reduce((accumulator, currentValue) => {
-                                    const a = parseFloat(accumulator) || 0;
-                                    const b = parseFloat(currentValue) || 0;
-                                    return isNaN(a) ? 0: a + isNaN(b) ? 0: b;
-                                }, 0)) *
-                                (lodgePriceInEth * ethPrice)
-                            ).toLocaleString()})`}
+                            {` ($${(sumArray(pendingFarmLandRewards) * (lodgePriceInEth * ethPrice)  ).toLocaleString()})`}
                         </span>
                     </div>
                 </div>

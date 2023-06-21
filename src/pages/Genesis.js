@@ -183,10 +183,10 @@ export default function Genesis() {
     functionName: "getReserves",
     chainId: arbChainId,
     onSuccess(data) {
-      const levelAmount = data[0] || 0; // WETH amount
+      const levelAmount = data[0] || 0; // LEVEL amount
       const wethAmount = data[1] || 0; // WETH amount
       if (wethAmount > 0) {
-        const newLevelPriceInETH = levelAmount / wethAmount;
+        const newLevelPriceInETH = wethAmount  / levelAmount;
         if (levelPriceInETH !== newLevelPriceInETH) {
           setLevelPriceInETH(newLevelPriceInETH);
         }
@@ -221,10 +221,10 @@ export default function Genesis() {
     functionName: "getReserves",
     chainId: arbChainId,
     onSuccess(data) {
-      const lodgeAmount = data[0] || 0; // WETH amount
+      const lodgeAmount = data[0] || 0; // LODGE amount
       const wethAmount = data[1] || 0; // WETH amount
       if (wethAmount > 0) {
-        const newLodgePriceInETH = lodgeAmount / wethAmount;
+        const newLodgePriceInETH = wethAmount / lodgeAmount;
         if (lodgePriceInETH !== newLodgePriceInETH) {
           setLodgePriceInETH(newLodgePriceInETH);
         }
