@@ -12,7 +12,7 @@ const navigation = [
   // { name: 'Farmlands', href: '/FarmLands', current: false },
   { name: 'Masonry', href: '/Masonry', current: false },
   { name: 'WildCards', href: '/WildCards', current: false },
-  { name: 'Farmlands', href: '/Genesis', current: false },
+  { name: 'Farmlands', href: '/FarmLands', current: false },
 
   { name: 'Presale', href: '/Presale', current: false },
   { name: 'Wildroom', href: '/WildRoom', current: false },
