@@ -53,13 +53,13 @@ const stats = [
   { label: 'Personal days left', value: 2 },
 ]
 const actions = [
-  {
-    icon:"https://cdn-icons-png.flaticon.com/512/6662/6662936.png",
-    name: 'Mystery boxes',
-    href: '/MysteryBoxes',
-    iconForeground: 'text-teal-700',
-    iconBackground: 'bg-teal-50',
-  },
+  // {
+  //   icon:"https://cdn-icons-png.flaticon.com/512/6662/6662936.png",
+  //   name: 'Mystery boxes',
+  //   href: '/MysteryBoxes',
+  //   iconForeground: 'text-teal-700',
+  //   iconBackground: 'bg-teal-50',
+  // },
   {
     icon: "https://cdn-icons-png.flaticon.com/512/6891/6891617.png",
     name: 'WildCards',
