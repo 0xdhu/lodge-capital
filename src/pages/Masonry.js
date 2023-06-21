@@ -1,38 +1,45 @@
 import Head from "next/head";
-import Image from "next/image";
-import { Butterfly_Kids, Inter } from "@next/font/google";
-import styles from "@/styles/Home.module.css";
-import Header from "../components/myHeader.jsx";
-import Header1 from "../components/Header.jsx";
-const inter = Inter({ subsets: ["latin"] });
-const logo = require("../images/cake-busd.png");
-const logo1 = require("../images/busd-icon.png");
-const logo2 = require("../images/level-icon.png");
+// import Image from "next/image";
+// import { Butterfly_Kids, Inter } from "@next/font/google";
+// import styles from "@/styles/Home.module.css";
+// import Header from "../components/myHeader.jsx";
+// import Header1 from "../components/Header.jsx";
+// const inter = Inter({ subsets: ["latin"] });
+// const logo = require("../images/cake-busd.png");
+// const logo1 = require("../images/busd-icon.png");
+// const logo2 = require("../images/level-icon.png");
 import ExampleHeader from "@/components/thheader.jsx";
-import ExampleModal from "@/components/mymodal.jsx";
-import ExampleB from "@/components/abutton.jsx";
-import ExampleA from "@/components/bbutton.jsx";
+// import ExampleModal from "@/components/mymodal.jsx";
+// import ExampleB from "@/components/abutton.jsx";
+// import ExampleA from "@/components/bbutton.jsx";
 import ExampleFF from "@/components/footer.jsx";
-import Example from "@/components/MyChart.jsx";
-import ExampleC from "@/components/Chart2.jsx";
+// import Example from "@/components/MyChart.jsx";
+// import ExampleC from "@/components/Chart2.jsx";
 import { useContractRead, WagmiConfig, useAccount } from "wagmi";
-import { watchBlockNumber } from "@wagmi/core";
+// import { watchBlockNumber } from "@wagmi/core";
 import ExampleCA from "@/components/contestAlert.jsx";
 import { BellIcon } from "@heroicons/react/24/outline";
 import React, { PureComponent } from "react";
-import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
+// import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
 import ExamplePie from "@/components/aPie.jsx";
 import { useEffect, useState } from "react";
-import BoardRoomABI from "@/constants/BoardRoomABI.json";
-import TreasuryABI from "@/constants/TreasuryABI.json";
-import { ethers, BigNumber } from "ethers";
+import { ethers } from "ethers";
 import MasonryDepositModal from "@/components/MasonryDepositModal.jsx";
 import Countdown from "@/components/MyCountdown.jsx";
 import MasonryWithdrawModal from "@/components/MasonryWithdrawModal.jsx";
-import ChainlinkFEEDABI from "@/constants/ChainlinkFEEDABI.json";
-import SLPABI from "@/constants/SLPABI.json";
+import { ContractAddressList, DeadAddress, SLPABI, ChainlinkFEEDABI, TreasuryABI, BoardRoomABI } from "@/constants/index.js";
+import useRefreshHook from "@/hook/refresh.jsx";
+
+const {
+  chainId: arbChainId,
+  treasuryAddress,
+  boardRoomAddress,
+  ethLevelLpTokenAddress,
+  wethEACAggregatorProxyAddress,
+} = ContractAddressList;
 
 export default function Masonry() {
+  const { refreshCount } = useRefreshHook(60000);
   const [nextEpochPoint, setNextEpochPoint] = useState(0);
   const [twap, setTwap] = useState(0);
   const [deposited, setDeposited] = useState(0);
@@ -47,8 +54,6 @@ export default function Masonry() {
   const [lodgePrice, setLodgePrice] = useState(0);
   const [totalSupply, setTotalSupply] = useState(0);
   const [pendingLEVEL, setPendingLEVEL] = useState(0);
-  const treasuryAddress = "0xE058027ED5a2a15eAfBdb798d46B29bB3257B34D";
-  const boardRoomAddress = "0x4d6316e252BB639EC17488251375E6E1f905fE4D";
 
   const supplyTiers = [
     0, 37860, 80932, 121399, 243046, 796640, 1499249, 3333332, 6000000,
@@ -56,222 +61,185 @@ export default function Masonry() {
   const maxExpansionTiers = [600, 500, 400, 300, 200, 150, 100, 50, 25];
 
   const { address } = useAccount();
-  const ContractRead = useContractRead({
+  const { refetch: nextEpochPointRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "nextEpochPoint",
-    chainId: 42161,
-    watch: true,
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const rdep = data.toString();
+      setNextEpochPoint(rdep);
     },
   });
-  const ContractRead1 = useContractRead({
+
+  const { refetch: getNativePriceRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "getNativePrice",
-    chainId: 42161,
-
-    watch: true,
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const rdep1 = parseFloat(data / 1700000000000000 || 0)
+        .toFixed(2)
+        .toString();
+      setTwap(rdep1);
     },
   });
-  const ContractRead5 = useContractRead({
+
+  const { refetch: epochRefetch } = useContractRead({
     address: treasuryAddress,
     abi: TreasuryABI,
     functionName: "epoch",
-    chainId: 42161,
-
-    watch: true,
-    onSuccess(data) {
-      console.log("Success", data);
+    chainId: arbChainId,
+    // watch: true,
+    onSuccess(data) {      
+      const rdep4 = data.toString();
+      setEpoch(rdep4);
     },
   });
 
-  const ContractRead2 = useContractRead({
+  const { refetch: balanceOfRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "balanceOf",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
-
-    watch: true,
+    args: [address || DeadAddress],
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const rdep2 = data.toString();
+      setDeposited(rdep2);
     },
   });
 
-  const ContractRead3 = useContractRead({
+  const {refetch: getNativeCirculatingSupplyRefetch} = useContractRead({
     address: treasuryAddress,
     abi: TreasuryABI,
     functionName: "getNativeCirculatingSupply",
-
-    chainId: 42161,
-
-    watch: true,
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const rdep3 = data.toString();
+      setGetNativeCirculatingSupply(rdep3);
     },
   });
 
-  const ContractRead4 = useContractRead({
+  const { refetch: membersRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "members",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
-
-    watch: true,
-    onSuccess(data) {
-      console.log("Success", data);
+    args: [address || DeadAddress],
+    chainId: arbChainId,
+    // watch: true,
+    onSuccess(data) {      
+      const rdep5 = data[2].toString();
+      setUserEpoch(rdep5);
     },
   });
 
-  const ContractRead6 = useContractRead({
+  const { refetch: canWithdrawRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "canWithdraw",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
+    args: [address || DeadAddress],
+    chainId: arbChainId,
 
-    watch: true,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      setCanWithdraw(data);
     },
   });
-  const ContractRead7 = useContractRead({
+
+  const {refetch: canClaimRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "canClaimReward",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
-
-    watch: true,
+    args: [address || DeadAddress],
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      setCanClaim(data);
     },
   });
-  const ContractRead8 = useContractRead({
-    address: boardRoomAddress,
-    abi: BoardRoomABI,
-    functionName: "members",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
 
-    watch: true,
-    onSuccess(data) {
-      console.log("Success", data);
-    },
-  });
-  const levelPriceRead = useContractRead({
+  const { refetch: levelPriceReadRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "getNativePrice",
-    chainId: 42161,
-
-    watch: true,
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const nativepricething = (data || 0).toString();
+      setNativePrice(ethers.utils.formatEther(nativepricething));
     },
   });
-  const ethPriceRead = useContractRead({
-    address: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+
+  const { refetch: ethPriceReadRefetch } = useContractRead({
+    address: wethEACAggregatorProxyAddress,
     abi: ChainlinkFEEDABI,
     functionName: "latestAnswer",
-    chainId: 42161,
-
-    watch: true,
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const ethpricething = (data || 0).toString();
+      setEthPrice(ethers.utils.formatUnits(ethpricething, 8));
     },
   });
 
   const lpreservesReadlodge = useContractRead({
-    address: "0xa3c513d75FCa556d3E6E1293eBa1a5C37F3742bB",
+    address: ethLevelLpTokenAddress,
     abi: SLPABI,
     functionName: "getReserves",
-    chainId: 42161,
-
-    watch: true,
-    onSuccess(data) {
-      console.log("Success", data);
-    },
+    chainId: arbChainId
   });
 
   const totalSupplyRead = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "totalSupply",
-
-    chainId: 42161,
-
-    watch: true,
-    onSuccess(data) {
-      console.log("Success", data);
-    },
+    chainId: arbChainId
   });
 
-  const earnedRead = useContractRead({
+  const {refetch: earnedReadRefetch } = useContractRead({
     address: boardRoomAddress,
     abi: BoardRoomABI,
     functionName: "earned",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-
-    chainId: 42161,
-
-    watch: true,
+    args: [address || DeadAddress],
+    chainId: arbChainId,
+    // watch: true,
     onSuccess(data) {
-      console.log("Success", data);
+      const read29 = (data || 0).toString();
+      setPendingLEVEL(ethers.utils.formatEther(read29));
     },
   });
 
-  const unwatch = watchBlockNumber(
-    {
-      chainId: 42161,
-    },
-    (blockNumber) => console.log(blockNumber)
-  );
-
   async function updateUI() {
     try {
-      const rdep = ContractRead.data.toString();
-      const rdep1 = parseFloat(ContractRead1.data / 1700000000000000 || 0)
-        .toFixed(2)
-        .toString();
-      const rdep2 = ContractRead2.data.toString();
-      const rdep3 = ContractRead3.data.toString();
-      const rdep4 = ContractRead5.data.toString();
-      const rdep5 = ContractRead4.data[2].toString();
-      const rdep6 = ContractRead6.data;
-      const nativepricething = (levelPriceRead.data || 0).toString();
-      const ethpricething = (ethPriceRead.data || 0).toString();
-      setEthPrice(ethers.utils.formatUnits(ethpricething, 8));
-      setNativePrice(ethers.utils.formatEther(nativepricething));
-      setCanWithdraw(rdep6);
-      setUserEpoch(rdep5);
-      const rdep7 = ContractRead7.data;
-      setCanClaim(rdep7);
-      setEpoch(rdep4);
-      setGetNativeCirculatingSupply(rdep3);
-      setDeposited(rdep2);
-      setNextEpochPoint(rdep);
-      setTwap(rdep1);
+      nextEpochPointRefetch();
+      getNativePriceRefetch();
+      epochRefetch();
+      balanceOfRefetch();
+      getNativeCirculatingSupplyRefetch();
+      membersRefetch();
+      canWithdrawRefetch();
+      levelPriceReadRefetch();
+      ethPriceReadRefetch();
+      canClaimRefetch();
+      
+      const read25 = lpreservesReadlodge.data[1] || 0; // WETH
+      const read27 = lpreservesReadlodge.data[0] || 1; // LODGE
+      setLodgePrice(read25 / read27); // LODGE price in terms of ETH
 
-      const read25 = lpreservesReadlodge.data[1] || 0;
-
-      const read27 = lpreservesReadlodge.data[0] || 1;
-      setLodgePrice(read25 / read27);
       const read26 = (totalSupplyRead.data || 0).toString();
       setTotalSupply(ethers.utils.formatEther(read26));
 
-      const read29 = (earnedRead.data || 0).toString();
-      setPendingLEVEL(ethers.utils.formatEther(read29));
+      earnedReadRefetch();
     } catch {}
   }
+  
   useEffect(() => {
     updateUI();
-  }, [unwatch]);
+  }, [refreshCount]);
 
   function getPrint() {
     const myvar = ethers.utils.formatEther(
@@ -366,7 +334,7 @@ export default function Masonry() {
                       : userEpoch - epoch + 4 + " epoch"}{" "}
                   </div>
                 </div>
-                <button className="text-xl text-center justify-self-center flex-auto m-2    rounded-lg p-0.5 px-20 sm:px-2 bg-black hover:scale-110 text-white border-2 border-white  hover:bg-white hover:text-black hover:border-2 hover:border-black  transition duration-300 ease-in-out">
+                <button className="text-xl text-center justify-self-center flex-auto m-2 rounded-lg p-0.5 px-20 sm:px-2 bg-black hover:scale-110 text-white border-2 border-white  hover:bg-white hover:text-black hover:border-2 hover:border-black  transition duration-300 ease-in-out">
                   claim
                 </button>{" "}
                 <MasonryWithdrawModal />

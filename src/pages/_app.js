@@ -7,13 +7,13 @@ import {
   darkTheme,
 } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig, chainaware } from "wagmi";
-import { arbitrum, bsc } from "wagmi/chains";
+import { arbitrum, bsc, arbitrumGoerli } from "wagmi/chains";
 import { Provider } from "react-redux";
 import store from "@/store/index";
 
 import { publicProvider } from "wagmi/providers/public";
 
-let { chains, provider } = configureChains([arbitrum, bsc], [publicProvider()]);
+let { chains, provider } = configureChains([arbitrum, bsc, arbitrumGoerli], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: "My RainbowKit App",
@@ -39,7 +39,7 @@ export default function App({ Component, pageProps }) {
             accentColorForeground: "black",
           })}
           chains={chains}
-          initialChain={arbitrum}
+          initialChain={arbitrumGoerli}
           coolMode
           {...true}
         >

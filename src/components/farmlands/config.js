@@ -1,53 +1,53 @@
 import { 
     ContractAddressList, 
-    GenesisABI, 
+    ShareRewardPoolABI, 
     BUSDABI, 
     ChainlinkFEEDABI, 
     DeadAddress 
 } from "@/constants/index.js";
 
 const {
-  genesisRewardPoolAddress,
+  shareRewardPoolAddress,
   sushiTokenAddress,
   arbEACAggregatorProxyAddress,
   chainId
 } = ContractAddressList;
 
 const commonDepositConfig = {
-    address: genesisRewardPoolAddress,
-    abi: GenesisABI,
+    address: shareRewardPoolAddress,
+    abi: ShareRewardPoolABI,
     functionName: "deposit",
     chainId,
     args: [0, 0], // _pid, _amount
 }
   
 const commonPendingReadConfig = {
-    address: genesisRewardPoolAddress,
-    abi: GenesisABI,
-    functionName: "pending",
+    address: shareRewardPoolAddress,
+    abi: ShareRewardPoolABI,
+    functionName: "pendingShare",
     chainId,
-    args: [0, genesisRewardPoolAddress]
+    args: [1, DeadAddress] // tempaddress
 }
   
 const commonTVLReadConfig = {
-    address: sushiTokenAddress,
+    address: sushiTokenAddress, // tempaddress
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId,
-    args: [genesisRewardPoolAddress]
+    args: [shareRewardPoolAddress]
 }
 
 const commonUserTokenReadConfig = {
-    address: genesisRewardPoolAddress,
-    abi: GenesisABI,
+    address: shareRewardPoolAddress,
+    abi: ShareRewardPoolABI,
     functionName: "userInfo",
     chainId,
-    args: [0, DeadAddress],
+    args: [1, DeadAddress],
 }
 
 const commonTokenAllocReadConfig = {
-    address: genesisRewardPoolAddress,
-    abi: GenesisABI,
+    address: shareRewardPoolAddress,
+    abi: ShareRewardPoolABI,
     functionName: "poolInfo",
     chainId,
     args: [0],

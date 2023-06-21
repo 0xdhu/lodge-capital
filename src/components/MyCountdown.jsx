@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 
 export default function Countdown({ timestamp }) {
-  const [timeRemaining, setTimeRemaining] = useState(timestamp - Math.floor(Date.now() / 1000));
+  const [timeRemaining, setTimeRemaining] = useState();
 
+  useEffect(() => {
+    setTimeRemaining(timestamp - Math.floor(Date.now() / 1000))
+  }, []);
   useEffect(() => {
     const intervalId = setInterval(() => {
         if((timestamp - Math.floor(Date.now() / 1000))>0){
@@ -21,7 +24,7 @@ export default function Countdown({ timestamp }) {
 
   return (
     <div>
-       {hours} h : {minutes} m : {seconds} s
+       {`${hours} h : ${minutes} m : ${seconds} s`}
     </div>
   );
 }

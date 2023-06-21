@@ -32,26 +32,34 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { Toaster } from "react-hot-toast";
 // import NumberFormat from "@/components/NumFormater.jsx";
-import { ContractAddressList, SLPABI, GenesisABI, BoardRoomABI, ChainlinkFEEDABI } from "@/constants/index.js";
+import { ContractAddressList, SLPABI, GenesisABI, BoardRoomABI, ShareRewardPoolABI, ChainlinkFEEDABI } from "@/constants/index.js";
 import useRefreshHook from "@/hook/refresh.jsx"
 import GenesisPool from "@/components/genesis/pool.jsx";
-import GenesisOverview from "@/components/genesis/genesis-overview";
+import StakingOverview from "@/components/genesis/genesis-overview";
+import FarmLandPool from "@/components/farmlands/pool";
 const {
-  genesisAddress,
+  genesisRewardPoolAddress,
+  shareRewardPoolAddress,
+
   sushiTokenAddress,
   wethTokenAddress,
   arbTokenAddress,
-  ethLevelLpTokenAddress,
   usdcTokenAddress,
   usdtTokenAddress,
   daiTokenAddress,
 
+  levelTokenAddress,
+
+  ethLevelLpTokenAddress,
+  ethLodgeLpTokenAddress,
   sushiEACAggregatorProxyAddress,
   wethEACAggregatorProxyAddress,
   arbEACAggregatorProxyAddress,
-  ethLevelLpBoardRoomAddress,
 
-  tokenIndexList,
+  // boardRoomAddress,
+
+  genesisTokenIndexList,
+  farmlandTokenIndexList,
   chainId: arbChainId
 } = ContractAddressList;
 
@@ -63,7 +71,13 @@ const {
   USDT_INDEX,
   DAI_INDEX,
   ETHLEVEL_INDEX
-} = tokenIndexList;
+} = genesisTokenIndexList;
+
+const {
+  ETHLEVEL_INDEX: FarmLand_ETHLEVEL_INDEX,
+  ETHLODGE_INDEX,
+  LEVEL_INDEX
+} = farmlandTokenIndexList;
 
 const commonPriceLatestAnswerConfig = {
   address: arbEACAggregatorProxyAddress,
@@ -72,32 +86,57 @@ const commonPriceLatestAnswerConfig = {
   chainId: arbChainId
 }
 
-export default function Masonry() {
+export default function Genesis() {
   const {refreshCount} = useRefreshHook(120000);
 
-  const [totalAllocation, setTotalAllocation] = useState(0);
+  const [totalGenesisAllocation, setTotalGenesisAllocation] = useState(0);
+  const [totalFarmLandAllocation, setTotalFarmAllocation] = useState(0);
   // USDT, USDC, DAI is just 1$
-  const [nativePrice, setNativePrice] = useState(0);
+  const [levelPriceInETH, setLevelPriceInETH] = useState(0);
+  const [lodgePriceInETH, setLodgePriceInETH] = useState(0);
+
   const [ethPrice, setEthPrice] = useState(0);
   const [arbPrice, setArbPrice] = useState(0);
   const [sushiPrice, setSushiPrice] = useState(0);
-  const [lpPrice, setLpPrice] = useState(0);
-  const [lpSupply, setLpSupply] = useState(0);
+
+  // ETH/Level
+  const [ethLevelLpPoolValueInETH, setETHLevelLpPoolValueInETH] = useState(0);
+  const [ethLevelLpPrice, setETHLevelLpPrice] = useState(0);
+  const [ethLevelLpSupply, setETHLevelLpSupply] = useState(0);
+
+  // ETH/Lodge
+  const [ethLodgeLpPoolValueInETH, setETHLodgeLpPoolValueInETH] = useState(0);
+  const [ethLodgeLpPrice, setETHLodgeLpPrice] = useState(0);
+  const [ethLodgeLpSupply, setETHLodgeLpSupply] = useState(0);
 
   //-- Prices from BoardRoom
-  const { refetch: levelPriceReadRefetch } = useContractRead({
-    address: ethLevelLpBoardRoomAddress,
-    abi: BoardRoomABI,
-    functionName: "getNativePrice",
-    chainId: arbChainId,
-    onSuccess(levelPriceData) {
-      const read19 = (levelPriceData || 0).toString();
-      const newNativePrice = ethers.utils.formatEther(read19);
-      if (nativePrice !== newNativePrice) {
-        setNativePrice(newNativePrice);
-      }
-    },
-  });
+  // const { refetch: levelPriceReadRefetch } = useContractRead({
+  //   address: boardRoomAddress,
+  //   abi: BoardRoomABI,
+  //   functionName: "getNativePrice",
+  //   chainId: arbChainId,
+  //   onSuccess(levelPriceData) {
+  //     const read19 = (levelPriceData || 0).toString();
+  //     const newLevelPriceInETH = ethers.utils.formatEther(read19);
+  //     if (levelPriceInETH !== newLevelPriceInETH) {
+  //       setLevelPriceInETH(newLevelPriceInETH);
+  //     }
+  //   },
+  // });
+
+  // const { refetch: lodgePriceReadRefetch } = useContractRead({
+  //   address: boardRoomAddress,
+  //   abi: BoardRoomABI,
+  //   functionName: "getNativePrice",
+  //   chainId: arbChainId,
+  //   onSuccess(lodgePriceData) {
+  //     const read19 = (lodgePriceData || 0).toString();
+  //     const newLevelPriceInETH = ethers.utils.formatEther(read19);
+  //     if (levelPriceInETH !== newLevelPriceInETH) {
+  //       setLevelPriceInETH(newLevelPriceInETH);
+  //     }
+  //   },
+  // });
 
   const { refetch: ethPriceReadRefetch } = useContractRead({
     ...commonPriceLatestAnswerConfig,
@@ -127,7 +166,10 @@ export default function Masonry() {
     address: sushiEACAggregatorProxyAddress,
     onSuccess(sushiPriceData) {
       const read19 = (sushiPriceData || 0).toString();
-      const newSushiPrice = ethers.utils.formatUnits(read19, 8);
+      let newSushiPrice = ethers.utils.formatUnits(read19, 8);
+      if (process.env.NEXT_PUBLIC_APP_ENV === "testnet") {
+        newSushiPrice = newSushiPrice * 0.56;
+      }
       if (sushiPrice !== newSushiPrice) {
         setSushiPrice(newSushiPrice);
       }
@@ -135,21 +177,29 @@ export default function Masonry() {
   });
 
   // LP info
-  const { refetch: lpreservesReadRefetch } = useContractRead({
+  const { refetch: ethLevelLpReservesReadRefetch } = useContractRead({
     address: ethLevelLpTokenAddress,
     abi: SLPABI,
     functionName: "getReserves",
     chainId: arbChainId,
     onSuccess(data) {
-      const read23 = data[1] || 0;
-      const mul = read23 * 2;
-      const newLpPrice = ethers.utils.formatEther(mul.toString())
-      if (lpPrice !== newLpPrice) {
-        setLpPrice(newLpPrice);
+      const levelAmount = data[0] || 0; // WETH amount
+      const wethAmount = data[1] || 0; // WETH amount
+      if (wethAmount > 0) {
+        const newLevelPriceInETH = levelAmount / wethAmount;
+        if (levelPriceInETH !== newLevelPriceInETH) {
+          setLevelPriceInETH(newLevelPriceInETH);
+        }
+      }
+
+      const mul = wethAmount * 2;
+      const newLpPoolValue = ethers.utils.formatEther(mul.toString())
+      if (ethLevelLpPoolValueInETH !== newLpPoolValue) {
+        setETHLevelLpPoolValueInETH(newLpPoolValue); // LP token price in terms of ETH
       }
     },
   });
-  const { refetch: lpSupplyReadRefetch } = useContractRead({
+  const { refetch: ethLevelLpSupplyReadRefetch } = useContractRead({
     address: ethLevelLpTokenAddress,
     abi: SLPABI,
     functionName: "totalSupply",
@@ -158,25 +208,94 @@ export default function Masonry() {
     onSuccess(data) {
       const read24 = data;
       const newLpSupply = ethers.utils.formatEther(read24.toString());
-      if (lpSupply !== newLpSupply) {
-        setLpSupply(newLpSupply);
+      if (ethLevelLpSupply !== newLpSupply) {
+        setETHLevelLpSupply(newLpSupply);
       }
     },
   });
 
-  const { refetch: totalAllocReadRefetch } = useContractRead({
-    address: genesisAddress,
+  // ETH/LODGE
+  const { refetch: ethLodgeLpReservesReadRefetch } = useContractRead({
+    address: ethLodgeLpTokenAddress,
+    abi: SLPABI,
+    functionName: "getReserves",
+    chainId: arbChainId,
+    onSuccess(data) {
+      const lodgeAmount = data[0] || 0; // WETH amount
+      const wethAmount = data[1] || 0; // WETH amount
+      if (wethAmount > 0) {
+        const newLodgePriceInETH = lodgeAmount / wethAmount;
+        if (lodgePriceInETH !== newLodgePriceInETH) {
+          setLodgePriceInETH(newLodgePriceInETH);
+        }
+      }
+
+      const mul = wethAmount * 2;
+      const newLpPoolValue = ethers.utils.formatEther(mul.toString())
+      if (ethLodgeLpPoolValueInETH !== newLpPoolValue) {
+        setETHLodgeLpPoolValueInETH(newLpPoolValue); // LP token price in terms of ETH
+      }
+    },
+  });
+  const { refetch: ethLodgeLpSupplyReadRefetch } = useContractRead({
+    address: ethLodgeLpTokenAddress,
+    abi: SLPABI,
+    functionName: "totalSupply",
+    chainId: arbChainId,
+
+    onSuccess(data) {
+      const read24 = data;
+      const newLpSupply = ethers.utils.formatEther(read24.toString());
+      if (ethLodgeLpSupply !== newLpSupply) {
+        setETHLodgeLpSupply(newLpSupply);
+      }
+    },
+  });
+
+
+  useEffect(() => {
+    if (ethLevelLpSupply > 0) {
+      const lpPrice = ethLevelLpPoolValueInETH * ethPrice / ethLevelLpSupply;
+      setETHLevelLpPrice(lpPrice);
+    }
+  }, [ethLevelLpPoolValueInETH, ethLevelLpSupply, ethPrice])
+
+  useEffect(() => {
+    if (ethLodgeLpSupply > 0) {
+      const lodgePrice = ethLodgeLpPoolValueInETH * ethPrice / ethLodgeLpSupply;
+      setETHLodgeLpPrice(lodgePrice);
+    }
+  }, [ethLodgeLpPoolValueInETH, ethLodgeLpSupply, ethPrice])
+
+
+  const { refetch: totalGenesisAllocReadRefetch } = useContractRead({
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "totalAllocPoint",
     chainId: arbChainId,
 
     onSuccess(data) {
       const totallcread0 = (data || 0).toString();
-      if (totallcread0 !== totalAllocation) {
-        setTotalAllocation(totallcread0);
+      if (totallcread0 !== totalGenesisAllocation) {
+        setTotalGenesisAllocation(totallcread0);
       }
     },
   });
+
+  const { refetch: totalFarmLandAllocReadRefetch } = useContractRead({
+    address: shareRewardPoolAddress,
+    abi: ShareRewardPoolABI,
+    functionName: "totalAllocPoint",
+    chainId: arbChainId,
+
+    onSuccess(data) {
+      const totallcread0 = (data || 0).toString();
+      if (totallcread0 !== totalFarmLandAllocation) {
+        setTotalFarmAllocation(totallcread0);
+      }
+    },
+  });
+
 
   // const unwatch = watchBlockNumber(
   //   {
@@ -187,14 +306,18 @@ export default function Masonry() {
 
   async function updateUI() {
     // Price, ETHLEVEL, SUSHI, ARB, WEH
-    levelPriceReadRefetch();
+    // levelPriceReadRefetch();
     ethPriceReadRefetch();
     arbPriceReadRefetch();
     sushiPriceReadRefetch();
-    lpreservesReadRefetch();
-    lpSupplyReadRefetch();
+    // LP
+    ethLevelLpReservesReadRefetch();
+    ethLevelLpSupplyReadRefetch();
+    ethLodgeLpReservesReadRefetch();
+    ethLodgeLpSupplyReadRefetch();
     // Total Alloc
-    totalAllocReadRefetch();
+    totalGenesisAllocReadRefetch();
+    totalFarmLandAllocReadRefetch();
   }
   useEffect(() => {
     if (refreshCount > 0) {
@@ -213,8 +336,9 @@ export default function Masonry() {
       <main className="bg-black min-h-screen font-Montserrat">
         <ExampleHeader />
         <ExampleCA />
-        <GenesisOverview 
-          nativePrice={nativePrice}
+        <StakingOverview 
+          levelPriceInEth={levelPriceInETH}
+          lodgePriceInEth={lodgePriceInETH}
           ethPrice={ethPrice}
         />
         <GenesisPool // WETH
@@ -222,11 +346,11 @@ export default function Masonry() {
           tokenName={"WETH"}
           tokenAddress={wethTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={WETH_INDEX}
           tokenDecimal={18}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalGenesisAllocation}
           tokenPrice={ethPrice}
         />
         <GenesisPool // Sushi
@@ -234,11 +358,11 @@ export default function Masonry() {
           tokenName={"SUSHI"}
           tokenAddress={sushiTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908734670147644/sSUSHI.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={SUSHI_INDEX}
           tokenDecimal={18}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalGenesisAllocation}
           tokenPrice={sushiPrice}
         />
         <GenesisPool // Arbitrum
@@ -246,11 +370,11 @@ export default function Masonry() {
           tokenName={"ARB"}
           tokenAddress={arbTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105909574810222773/sARB.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={ARB_INDEX}
           tokenDecimal={18}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalGenesisAllocation}
           tokenPrice={arbPrice}
         />
         <GenesisPool // USDC
@@ -258,11 +382,11 @@ export default function Masonry() {
           tokenName={"USDC"}
           tokenAddress={usdcTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908735139917977/sUSDC.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={USDC_INDEX}
           tokenDecimal={6}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalGenesisAllocation}
           tokenPrice={1}
         />
         <GenesisPool // USDT
@@ -270,11 +394,11 @@ export default function Masonry() {
           tokenName={"USDT"}
           tokenAddress={usdtTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908735794225262/sUSDT.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={USDT_INDEX}
           tokenDecimal={6}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalGenesisAllocation}
           tokenPrice={1}
         />
         <GenesisPool // DAI
@@ -282,11 +406,11 @@ export default function Masonry() {
           tokenName={"DAI"}
           tokenAddress={daiTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908731708977272/sDAI.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={DAI_INDEX}
           tokenDecimal={18}
-          totalAllocation={totalAllocation}
+          totalAllocation={totalGenesisAllocation}
           tokenPrice={1}
         />
 
@@ -296,14 +420,57 @@ export default function Masonry() {
           tokenAddress={ethLevelLpTokenAddress}
           gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
           lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
-          nativePrice={nativePrice}
+          nativePrice={levelPriceInETH}
           ethPrice={ethPrice}
           tokenIndex={ETHLEVEL_INDEX}
           tokenDecimal={18}
-          totalAllocation={totalAllocation}
-          tokenPrice={(lpPrice / lpSupply) || 1}
+          totalAllocation={totalGenesisAllocation}
+          tokenPrice={ethLevelLpPrice}
         />
 
+        {/* FarmLand */}
+        <FarmLandPool // ETH/LEVEL
+          refresh={refreshCount}
+          tokenName={"ETH/LEVEL"}
+          tokenAddress={ethLevelLpTokenAddress}
+          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
+          lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+          nativePrice={lodgePriceInETH}
+          ethPrice={ethPrice}
+          tokenIndex={FarmLand_ETHLEVEL_INDEX}
+          tokenDecimal={18}
+          totalAllocation={totalFarmLandAllocation}
+          tokenPrice={ethLevelLpPrice}
+        />
+
+        {/* FarmLand */}
+        <FarmLandPool // ETH/LODGE
+          refresh={refreshCount}
+          tokenName={"ETH/LODGE"}
+          tokenAddress={ethLodgeLpTokenAddress}
+          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
+          lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+          nativePrice={lodgePriceInETH}
+          ethPrice={ethPrice}
+          tokenIndex={ETHLODGE_INDEX}
+          tokenDecimal={18}
+          totalAllocation={totalFarmLandAllocation}
+          tokenPrice={ethLodgeLpPrice}
+        />
+
+        {/* FarmLand */}
+        <FarmLandPool // LEVEL
+          refresh={refreshCount}
+          tokenName={"LEVEL"}
+          tokenAddress={levelTokenAddress}
+          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+          nativePrice={lodgePriceInETH}
+          ethPrice={ethPrice}
+          tokenIndex={LEVEL_INDEX}
+          tokenDecimal={18}
+          totalAllocation={totalFarmLandAllocation}
+          tokenPrice={levelPriceInETH * ethPrice}
+        />
         <span> {"   "}</span>
         <span> {"   "}</span>
         <span> {"   "}</span>

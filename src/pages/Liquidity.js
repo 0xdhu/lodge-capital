@@ -91,10 +91,10 @@ export default function Masonry() {
   const [selected, setSelected] = useState(people[0]);
   const [selected1, setSelected1] = useState(people1[0]);
 
-  const lodgelpAddress = "0x37C95C32E6F45063acC5117Bb28095e4f5687A18";
+  const ethLodgeLpTokenAddress = "0x37C95C32E6F45063acC5117Bb28095e4f5687A18";
   const levellpAddress = "0xf6f86E01312B89BC189707dA449e9E0B094a2231";
-  const lodgeAddress = "0x44eFfaFbD4a793848423C35A78C5c5a420acb03d";
-  const levelAddress = "0x4839E7897417079FFB0420bF9c8366Aa0B82e2d3";
+  const lodgeTokenAddress = "0x44eFfaFbD4a793848423C35A78C5c5a420acb03d";
+  const levelTokenAddress = "0x4839E7897417079FFB0420bF9c8366Aa0B82e2d3";
   const wethAddress = "0xEe01c0CD76354C383B8c7B4e65EA88D00B06f36f";
   const zapAddress = "0xF012A1f9fAdD850fd82dec1E2aEfbe453FCf4253";
 
@@ -160,7 +160,7 @@ export default function Masonry() {
     },
   });
   const lodgeBalanceRead = useContractRead({
-    address: lodgeAddress,
+    address: lodgeTokenAddress,
     abi: SLPABI,
     functionName: "balanceOf",
     args: [address || "0x000000000000000000000000000000000000dead"],
@@ -171,7 +171,7 @@ export default function Masonry() {
     },
   });
   const levelBalanceRead = useContractRead({
-    address: levelAddress,
+    address: levelTokenAddress,
     abi: SLPABI,
     functionName: "balanceOf",
     args: [address || "0x000000000000000000000000000000000000dead"],
@@ -184,7 +184,7 @@ export default function Masonry() {
   });
 
   const lodgelpBalanceRead = useContractRead({
-    address: lodgelpAddress,
+    address: ethLodgeLpTokenAddress,
     abi: SLPABI,
     functionName: "balanceOf",
     args: [address || "0x000000000000000000000000000000000000dead"],
@@ -221,7 +221,7 @@ export default function Masonry() {
   });
 
   const lpreservesReadlodge = useContractRead({
-    address: lodgelpAddress,
+    address: ethLodgeLpTokenAddress,
     abi: SLPABI,
     functionName: "getReserves",
     chainId: 421613,
@@ -253,7 +253,7 @@ export default function Masonry() {
 
   const { config: approveConfig, error: approveError } =
     usePrepareContractWrite({
-      address: levelAddress,
+      address: levelTokenAddress,
       abi: SLPABI,
       functionName: "approve",
       chainId: 421613,
@@ -274,7 +274,7 @@ export default function Masonry() {
   });
 
   const ContractRead1 = useContractRead({
-    address: levelAddress,
+    address: levelTokenAddress,
     abi: SLPABI,
     functionName: "allowance",
     args: [address, zapAddress],
@@ -286,7 +286,7 @@ export default function Masonry() {
 
   const { config: approveConfigLodge, error: approveErrorlodge } =
     usePrepareContractWrite({
-      address: lodgeAddress,
+      address: lodgeTokenAddress,
       abi: SLPABI,
       functionName: "approve",
       chainId: 421613,
@@ -307,7 +307,7 @@ export default function Masonry() {
   });
 
   const ContractRead2 = useContractRead({
-    address: lodgeAddress,
+    address: lodgeTokenAddress,
     abi: SLPABI,
     functionName: "allowance",
     args: [address, zapAddress],
@@ -350,7 +350,7 @@ export default function Masonry() {
 
     chainId: 421613,
     args: [
-      selected.name == "LODGE" ? lodgeAddress : levelAddress,
+      selected.name == "LODGE" ? lodgeTokenAddress : levelTokenAddress,
       wethAddress,
       ethers.utils.parseEther((parseFloat(ValueOrder) || "1").toString()),
       ethers.utils.parseEther((ValueOrder1 || "1").toString()),

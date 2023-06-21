@@ -9,7 +9,7 @@ const logo=require("../images/lodge-crest-1.png")
 const navigation = [
   { name: 'Dashboard', href: '/DashBoard', current: false },
   
-  { name: 'Farmlands', href: '/FarmLands', current: false },
+  // { name: 'Farmlands', href: '/FarmLands', current: false },
   { name: 'Masonry', href: '/Masonry', current: false },
   { name: 'WildCards', href: '/WildCards', current: false },
   { name: 'Genesis', href: '/Genesis', current: false },

@@ -1,15 +1,14 @@
 import { Fragment, useRef, useState,useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { usePrepareContractWrite,useContractWrite,useContractRead,useAccount,useWaitForTransaction } from 'wagmi'
-import { watchBlockNumber } from "@wagmi/core";
 import { ethers } from 'ethers';
 import toast, { Toaster } from 'react-hot-toast';
 import { GenesisABI, ContractAddressList } from "@/constants/index";
 import useRefreshHook from '@/hook/refresh';
 
 const {
-  genesisAddress,
-  tokenIndexList,
+  genesisRewardPoolAddress,
+  genesisTokenIndexList,
   sushiTokenAddress,
   wethTokenAddress,
   arbTokenAddress,
@@ -28,7 +27,7 @@ const {
   USDT_INDEX,
   DAI_INDEX,
   ETHLEVEL_INDEX,
-} = tokenIndexList;
+} = genesisTokenIndexList;
 
 const tokens = [
   { id: WETH_INDEX, name: "WETH", address: wethTokenAddress, decimal: 18 },
@@ -44,8 +43,8 @@ export default function WithdrawModal( props) {
   const [open, setOpen] = useState(false)
   const { refreshCount } = useRefreshHook(60000);
 
-  let [ValueOrder, setValueOrder] = useState(0);
-  let [balance,setBalance]=useState(0);
+  const [ValueOrder, setValueOrder] = useState(0);
+  const [balance,setBalance]=useState(0);
   
   function handleOpen(){
     setOpen(true);
@@ -61,15 +60,15 @@ export default function WithdrawModal( props) {
   const notify1 = () => toast.success(<div>{`Succesfully withdrawn ${balance+" "+ tokens[props.index]} !  `} <a href={`https://arbiscan.com/tx/${withdrawData?.hash}`} className="underline">arbiscan</a></div>)
   
   const { config, refetch } = usePrepareContractWrite({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: 'withdraw',
     chainId: arbChainId,
     args: [props.index, ethers.utils.parseUnits(ValueOrder.toString() || "1",tokens[props.index].decimal)],
   })
   const { write, data: withdrawData, isLoading } = useContractWrite({
-    ...config
-    ,onSuccess:notify2
+    ...config,
+    onSuccess:notify2
   })
   
   useWaitForTransaction({
@@ -85,7 +84,7 @@ export default function WithdrawModal( props) {
   })
 
   const {refetch: BalanceRefresh} = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: arbChainId,
@@ -111,7 +110,10 @@ export default function WithdrawModal( props) {
 
 
   return (
-    <> <button  onClick={handleOpen} className="bg-black mx-2 rounded-lg py-2 text-white flex-auto ">
+    <> <button 
+      disabled={parseFloat(balance) <= 0} onClick={handleOpen} 
+      className={`bg-black mx-2 rounded-lg py-2 text-white flex-auto ${parseFloat(balance) <= 0? "cursor-not-allowed": "cursor-pointer" }`}
+    >
       Withdraw
     </button>
     <Transition.Root show={open} as={Fragment}>
@@ -168,9 +170,9 @@ export default function WithdrawModal( props) {
                       />
                       <input className="flex-auto rounded-lg my-1 border-2"
                         type="number" // change the type to "number"
-                        style={{ maxWidth : "35%",borderColor :"#000",cursor:"zoom-in" }}
+                        style={{ maxWidth : "35%",borderColor :"#000" }}
                         value={ValueOrder}
-                        step="0.01" // bind the value of the input field to the same value as the slider
+                        step="0.001" // bind the value of the input field to the same value as the slider
                         max={ ethers.utils.formatUnits(balance,tokens[props.index].decimal) }
                         onChange={(event) => {
                           setValueOrder(event.target.value); // update the value of the slider when the input field value changes

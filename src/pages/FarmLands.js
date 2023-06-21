@@ -34,8 +34,21 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import ChainlinkFEEDABI from "@/constants/ChainlinkFEEDABI.json";
 import SLPABI from "@/constants/SLPABI.json";
+import { ContractAddressList } from "@/constants/index.js";
+import useRefreshHook from "@/hook/refresh.jsx";
 
-export default function Masonry() {
+const {
+  shareRewardPoolAddress,
+  ethLodgeLpTokenAddress,
+  levelTokenAddress, 
+  ethLevelLpTokenAddress,
+  lodgePerSecond,
+  wethEACAggregatorProxyAddress,
+  chainId: arbChainId
+} = ContractAddressList;
+
+export default function FarmLand() {
+  const { refreshCount } = useRefreshHook(120000);
   const { address, isConnecting, isDisconnected } = useAccount();
   const [pendingLODGEETH, setPendingLODGEETH] = useState(0);
   const [pendingETHLEVEL, setPendingETHLEVEL] = useState(0);
@@ -60,17 +73,11 @@ export default function Masonry() {
   const [levelAlloc, setLevelAlloc] = useState(0);
   const [totalAllocation, setTotalAllocation] = useState(0);
 
-  const shareRewardPoolAddress = "0x6a8d3350faC7114de8a69333A88f2bD68A43C19E";
-  const lodgelpAddress = "0xc40d7d423d788eeecd801b634480a86596388c65";
-  const levelEthAddress = "0x623f44f9fae979e1099c6ca6a841a3b0163edc06";
-  const levelAddress = "0x0E5c5De023fe05aD4858714E0f58b0cB98718b1D";
-  const lodgePerSecond = 0.0009384384;
-
   const pendinglodgeeth = useContractRead({
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "pendingShare",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [1, address],
 
     onSuccess(data) {
@@ -79,10 +86,10 @@ export default function Masonry() {
   });
 
   const lodgethtvl = useContractRead({
-    address: lodgelpAddress,
+    address: ethLodgeLpTokenAddress,
     abi: BUSDABI,
     functionName: "balanceOf",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [shareRewardPoolAddress],
 
     onSuccess(data) {
@@ -94,7 +101,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "userInfo",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [1, address],
 
     onSuccess(data) {
@@ -105,7 +112,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "pendingShare",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [0, address],
 
     onSuccess(data) {
@@ -114,10 +121,10 @@ export default function Masonry() {
   });
 
   const ETHLEVELTVL = useContractRead({
-    address: levelEthAddress,
+    address: ethLevelLpTokenAddress,
     abi: BUSDABI,
     functionName: "balanceOf",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [shareRewardPoolAddress],
 
     onSuccess(data) {
@@ -129,7 +136,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "userInfo",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [0, address],
 
     onSuccess(data) {
@@ -141,7 +148,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "pendingShare",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [2, address],
 
     onSuccess(data) {
@@ -150,10 +157,10 @@ export default function Masonry() {
   });
 
   const LEVELTVL = useContractRead({
-    address: levelAddress,
+    address: levelTokenAddress,
     abi: BUSDABI,
     functionName: "balanceOf",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [shareRewardPoolAddress],
 
     onSuccess(data) {
@@ -165,7 +172,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "userInfo",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [2, address],
 
     onSuccess(data) {
@@ -174,10 +181,10 @@ export default function Masonry() {
   });
 
   const ethPriceRead = useContractRead({
-    address: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+    address: wethEACAggregatorProxyAddress,
     abi: ChainlinkFEEDABI,
     functionName: "latestAnswer",
-    chainId: 42161,
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
@@ -185,20 +192,20 @@ export default function Masonry() {
   });
 
   const lpreservesReadlvl = useContractRead({
-    address: levelEthAddress,
+    address: ethLevelLpTokenAddress,
     abi: SLPABI,
     functionName: "getReserves",
-    chainId: 42161,
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
     },
   });
   const lpSupplyReadlvl = useContractRead({
-    address: levelEthAddress,
+    address: ethLevelLpTokenAddress,
     abi: SLPABI,
     functionName: "totalSupply",
-    chainId: 42161,
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
@@ -206,20 +213,20 @@ export default function Masonry() {
   });
 
   const lpreservesReadlodge = useContractRead({
-    address: lodgelpAddress,
+    address: ethLodgeLpTokenAddress,
     abi: SLPABI,
     functionName: "getReserves",
-    chainId: 42161,
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
     },
   });
   const lpSupplyReadlodge = useContractRead({
-    address: lodgelpAddress,
+    address: ethLodgeLpTokenAddress,
     abi: SLPABI,
     functionName: "totalSupply",
-    chainId: 42161,
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
@@ -230,7 +237,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "poolInfo",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [0],
 
     onSuccess(data) {
@@ -241,7 +248,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "poolInfo",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [1],
 
     onSuccess(data) {
@@ -252,7 +259,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "poolInfo",
-    chainId: 42161,
+    chainId: arbChainId,
     args: [2],
 
     onSuccess(data) {
@@ -264,7 +271,7 @@ export default function Masonry() {
     address: shareRewardPoolAddress,
     abi: ShareRewardPoolABI,
     functionName: "totalAllocPoint",
-    chainId: 42161,
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
@@ -331,12 +338,12 @@ export default function Masonry() {
     onSuccess: notify2,
   });
 
-  const unwatch = watchBlockNumber(
-    {
-      chainId: 421613,
-    },
-    (blockNumber) => console.log(blockNumber)
-  );
+  // const unwatch = watchBlockNumber(
+  //   {
+  //     chainId: 421613,
+  //   },
+  //   (blockNumber) => console.log(blockNumber)
+  // );
 
   async function updateUI() {
     try {
@@ -391,6 +398,7 @@ export default function Masonry() {
       setLpSupplylg(ethers.utils.formatEther(read26.toString()));
       const mul1 = read25 * 2;
       setLpPricelg(ethers.utils.formatEther(mul1.toString()));
+      
       const read27 = lpreservesReadlodge.data[0] || 1;
       setLodgePrice(read25 / read27);
 
@@ -418,7 +426,7 @@ export default function Masonry() {
   }
   useEffect(() => {
     updateUI();
-  }, [unwatch]);
+  }, [refreshCount]); // 
 
   return (
     <>

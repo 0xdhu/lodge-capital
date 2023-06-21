@@ -1,118 +1,117 @@
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "@/styles/Home.module.css";
-import Header from "../components/myHeader.jsx";
-import Header1 from "../components/Header.jsx";
-const inter = Inter({ subsets: ["latin"] });
-const logo = require("../images/cake-busd.png");
-const logo1 = require("../images/busd-icon.png");
-const logo2 = require("../images/level-icon.png");
-import ExampleHeader from "@/components/thheader.jsx";
-import ExampleModal from "@/components/mymodal.jsx";
-import ExampleB from "@/components/abutton.jsx";
-import ExampleA from "@/components/bbutton.jsx";
-import ExampleFF from "@/components/footer.jsx";
-import Example from "@/components/MyChart.jsx";
-import ExampleC from "@/components/Chart2.jsx";
 import { useContractRead, WagmiConfig, useAccount } from "wagmi";
 import { watchBlockNumber } from "@wagmi/core";
-import MyDropDown from "@/components/dropdown.jsx";
 import { Fragment, useState, useEffect } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import ZapperDepositModal from "@/components/ZapperModal.jsx";
 import BUSDABI from "@/constants/BUSDABI.json";
-import { ethers, BigNumber } from "ethers";
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { ethers } from "ethers";
+import { DeadAddress, ContractAddressList } from "@/constants/index.js";
+import useRefreshHook from '@/hook/refresh';
+import ExampleHeader from "@/components/thheader";
+import ExampleFF from "@/components/footer";
+
+const {
+  chainId: arbChainId,
+  levelTokenAddress,
+  lodgeTokenAddress,
+  ethLodgeLpTokenAddress,
+  ethLevelLpTokenAddress,
+  wethTokenAddress,
+  usdcTokenAddress,
+  usdtTokenAddress,
+  daiTokenAddress
+} = ContractAddressList;
+
 const people = [
   {
     index: 0,
     name: "LEVEL",
-    address: "0x0E5c5De023fe05aD4858714E0f58b0cB98718b1D",
+    address: levelTokenAddress,
   },
   {
     index: 1,
     name: "LODGE",
-    address: "0xA8d9d5E9eAE0b44EDc30B5d302f018F252d9CEB7",
+    address: lodgeTokenAddress,
   },
   {
     index: 2,
     name: "LEVEL/WETH",
-    address: "0x623f44f9fae979e1099c6ca6a841a3b0163edc06",
+    address: ethLevelLpTokenAddress,
   },
   {
     index: 3,
     name: "LODGE/WETH",
-    address: "0xc40d7d423d788eeecd801b634480a86596388c65",
+    address: ethLodgeLpTokenAddress,
   },
   {
     index: 4,
     name: "WETH",
-    address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    address: wethTokenAddress,
   },
   {
     index: 5,
     name: "USDC",
-    address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    address: usdcTokenAddress,
   },
   {
     index: 6,
     name: "USDT",
-    address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+    address: usdtTokenAddress,
   },
   {
     index: 7,
     name: "DAI",
-    address: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    address: daiTokenAddress,
   },
 ];
 const people1 = [
   {
     index: 0,
     name: "LEVEL",
-    address: "0x0E5c5De023fe05aD4858714E0f58b0cB98718b1D",
+    address: levelTokenAddress,
   },
   {
     index: 1,
     name: "LODGE",
-    address: "0xA8d9d5E9eAE0b44EDc30B5d302f018F252d9CEB7",
+    address: lodgeTokenAddress,
   },
   {
     index: 2,
     name: "LEVEL/WETH",
-    address: "0x623f44f9fae979e1099c6ca6a841a3b0163edc06",
+    address: ethLevelLpTokenAddress,
   },
   {
     index: 3,
     name: "LODGE/WETH",
-    address: "0xc40d7d423d788eeecd801b634480a86596388c65",
+    address: ethLodgeLpTokenAddress,
   },
   {
     index: 4,
     name: "WETH",
-    address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    address: wethTokenAddress,
   },
   {
     index: 5,
     name: "USDC",
-    address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    address: usdcTokenAddress,
   },
   {
     index: 6,
     name: "USDT",
-    address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+    address: usdtTokenAddress,
   },
   {
     index: 7,
     name: "DAI",
-    address: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    address: daiTokenAddress,
   },
 ];
 
 export default function Zapper() {
+  const { refreshCount } = useRefreshHook(60000);
+
   const [selected, setSelected] = useState(people[0]);
   const [selected1, setSelected1] = useState(people1[0]);
   const [balance, setBalance] = useState(0);
@@ -123,8 +122,8 @@ export default function Zapper() {
     address: selected.address,
     abi: BUSDABI,
     functionName: "balanceOf",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
+    args: [address || DeadAddress],
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
@@ -135,20 +134,13 @@ export default function Zapper() {
     address: selected1.address,
     abi: BUSDABI,
     functionName: "balanceOf",
-    args: [address || "0x000000000000000000000000000000000000dead"],
-    chainId: 42161,
+    args: [address || DeadAddress],
+    chainId: arbChainId,
 
     onSuccess(data) {
       console.log("Success", data);
     },
   });
-
-  const unwatch = watchBlockNumber(
-    {
-      chainId: 42161,
-    },
-    (blockNumber) => console.log(blockNumber)
-  );
 
   async function updateUI() {
     try {
@@ -170,7 +162,7 @@ export default function Zapper() {
   }
   useEffect(() => {
     updateUI();
-  }, [unwatch]);
+  }, [refreshCount]);
 
   return (
     <>

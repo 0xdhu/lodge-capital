@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import toast from "react-hot-toast";
 import { ethers } from "ethers";
-import { updateGenesisPoolPendingValueAtIndex, updateGenesisPoolTVLAtIndex } from "@/store/index";
+import { updateFarmLandPoolPendingValueAtIndex, updateFarmLandPoolTVLAtIndex } from "@/store/index";
 import { useDispatch } from 'react-redux';
 
 import { ContractAddressList, DeadAddress } from "@/constants/index.js";
@@ -22,22 +22,22 @@ import {
     commonTokenAllocReadConfig
 } from "./config";
 
-const { chainId: arbChainId, levelPerSecond } = ContractAddressList;
+const { chainId: arbChainId, lodgePerSecond } = ContractAddressList;
 
-const GenesisPool = ({
+const FarmLandPool = ({
     refresh=0,
     tokenName,
     tokenAddress,
     gifIcon,
     lpGifIcon="",
-    nativePrice=0, // Level price in ETH
+    nativePrice=0, // Lodge Price in ETH
     ethPrice=0,
     tokenIndex=0,
     tokenDecimal=18,
     totalAllocation=0,
     tokenPrice=0,
 }) => {
-    // const { updateGenesisPoolPendingValueAtIndex, updateGenesisPoolTVLAtIndex } = useContext(GenesisContext);
+    // const { updateFarmLandPoolPendingValueAtIndex, updateFarmLandPoolTVLAtIndex } = useContext(GenesisContext);
     const dispatch = useDispatch();
 
     const { address } = useAccount();
@@ -71,7 +71,7 @@ const GenesisPool = ({
         onSuccess: (data) => {
             toast.success(
                 <div>
-                    {`Succesfully claimed ${pendingToken} LEVEL!  `}{" "}
+                    {`Succesfully claimed ${pendingToken} LODGE!  `}{" "}
                     <a
                         href={`https://arbiscan.io/tx/${claimData?.hash}`}
                         className="underline"
@@ -97,7 +97,7 @@ const GenesisPool = ({
             const newPendingToken = ethers.utils.formatUnits(read1, tokenDecimal);
             if (pendingToken !== newPendingToken) {
                 setPendingToken(newPendingToken);
-                dispatch(updateGenesisPoolPendingValueAtIndex({tokenIndex, pendingAmount: newPendingToken}));
+                dispatch(updateFarmLandPoolPendingValueAtIndex({tokenIndex, pendingAmount: newPendingToken}));
             }
         }
     });
@@ -150,18 +150,18 @@ const GenesisPool = ({
 
     useEffect(() => {
         const pLockedValue = parseFloat(tokenTVL) * tokenPrice;
-        dispatch(updateGenesisPoolTVLAtIndex({tokenIndex: tokenIndex, poolTVL: pLockedValue}));
+        dispatch(updateFarmLandPoolTVLAtIndex({tokenIndex, poolTVL: pLockedValue}));
     }, [tokenTVL, tokenPrice])
    
     const PanelRow = useCallback(() => {
-        // console.log("OneTime Rendering", tokenName, totalAllocation, tokenTVL, tokenPrice, nativePrice)
-        const apr = (totalAllocation <= 0 || tokenTVL <= 0 || tokenPrice <= 0)? 0 : ((levelPerSecond *
+        // console.log("OneTime Rendering", tokenName)
+        const apr = (totalAllocation <= 0 || tokenTVL <= 0 || tokenPrice <= 0)? 0 : ((lodgePerSecond *
           nativePrice *
           ethPrice *
           31556926 *
           tokenAllocation) / totalAllocation / tokenTVL / tokenPrice);
     
-        const levelEarned = parseFloat(
+        const lodgeEarned = parseFloat(
           pendingToken * nativePrice * ethPrice
         ).toLocaleString();
         
@@ -182,7 +182,7 @@ const GenesisPool = ({
                 tokenTVL={tokenTVL * tokenPrice}
                 apr={apr}
                 userToken={userToken}
-                levelEarned={levelEarned}
+                lodgeEarned={lodgeEarned}
                 tokenIndex={tokenIndex}
                 refreshUI={updateUI}
                 claimWriteAsync={claimWriteAsync}
@@ -194,4 +194,4 @@ const GenesisPool = ({
     )
 }
 
-export default GenesisPool;
+export default FarmLandPool;

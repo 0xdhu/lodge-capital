@@ -66,10 +66,10 @@ export default function Masonry() {
   const [sushiPrice, setSushiPrice] = useState(0);
   const [lpPrice, setLpPrice] = useState(0);
   const [lpSupply, setLpSupply] = useState(0);
-  const genesisAddress = "0x68d0E9B1F9E839AcC1C6179BA0c5577CF0e4eB2b";
+  const genesisRewardPoolAddress = "0x68d0E9B1F9E839AcC1C6179BA0c5577CF0e4eB2b";
 
   const SushiPendingRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "pending",
     chainId: 421613,
@@ -85,7 +85,7 @@ export default function Masonry() {
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId: 421613,
-    args: [genesisAddress],
+    args: [genesisRewardPoolAddress],
     watch: true,
     onSuccess(data) {
       console.log("Success", data);
@@ -93,7 +93,7 @@ export default function Masonry() {
   });
 
   const SushiUserRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: 421613,
@@ -104,7 +104,7 @@ export default function Masonry() {
     },
   });
   const ETHPendingRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "pending",
     chainId: 421613,
@@ -116,11 +116,11 @@ export default function Masonry() {
   });
 
   const ETHTVLRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId: 421613,
-    args: [genesisAddress],
+    args: [genesisRewardPoolAddress],
     watch: true,
     onSuccess(data) {
       console.log("Success", data);
@@ -128,7 +128,7 @@ export default function Masonry() {
   });
 
   const ETHUserRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: 421613,
@@ -140,7 +140,7 @@ export default function Masonry() {
   });
 
   const ARBPendingRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "pending",
     chainId: 421613,
@@ -156,7 +156,7 @@ export default function Masonry() {
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId: 421613,
-    args: [genesisAddress],
+    args: [genesisRewardPoolAddress],
     watch: true,
     onSuccess(data) {
       console.log("Success", data);
@@ -164,7 +164,7 @@ export default function Masonry() {
   });
 
   const ARBUserRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: 421613,
@@ -175,7 +175,7 @@ export default function Masonry() {
     },
   });
   const ETHLVLPendingRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "pending",
     chainId: 421613,
@@ -191,7 +191,7 @@ export default function Masonry() {
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId: 421613,
-    args: [genesisAddress],
+    args: [genesisRewardPoolAddress],
     watch: true,
     onSuccess(data) {
       console.log("Success", data);
@@ -199,7 +199,7 @@ export default function Masonry() {
   });
 
   const ETHLVLUserRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: 421613,
@@ -210,7 +210,7 @@ export default function Masonry() {
     },
   });
   const USDCPendingRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "pending",
     chainId: 421613,
@@ -226,7 +226,7 @@ export default function Masonry() {
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId: 421613,
-    args: [genesisAddress],
+    args: [genesisRewardPoolAddress],
     watch: true,
     onSuccess(data) {
       console.log("Success", data);
@@ -234,7 +234,7 @@ export default function Masonry() {
   });
 
   const USDCUserRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: 421613,
@@ -245,7 +245,7 @@ export default function Masonry() {
     },
   });
   const DAIPendingRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "pending",
     chainId: 421613,
@@ -261,7 +261,7 @@ export default function Masonry() {
     abi: BUSDABI,
     functionName: "balanceOf",
     chainId: 421613,
-    args: [genesisAddress],
+    args: [genesisRewardPoolAddress],
     watch: true,
     onSuccess(data) {
       console.log("Success", data);
@@ -269,7 +269,7 @@ export default function Masonry() {
   });
 
   const DAIUserRead = useContractRead({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: "userInfo",
     chainId: 421613,

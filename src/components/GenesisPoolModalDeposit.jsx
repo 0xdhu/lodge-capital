@@ -8,8 +8,8 @@ import { GenesisABI, BUSDABI, ContractAddressList } from "@/constants/index";
 import useRefreshHook from '@/hook/refresh';
 
 const {
-  genesisAddress,
-  tokenIndexList,
+  genesisRewardPoolAddress,
+  genesisTokenIndexList,
   sushiTokenAddress,
   wethTokenAddress,
   arbTokenAddress,
@@ -28,7 +28,7 @@ const {
   USDT_INDEX,
   DAI_INDEX,
   ETHLEVEL_INDEX,
-} = tokenIndexList;
+} = genesisTokenIndexList;
 
 const tokens = [
   { id: WETH_INDEX, name: "WETH", address: wethTokenAddress, decimal: 18 },
@@ -46,7 +46,7 @@ const DepositButton = ({valueOrder, tokenIndex, forceRefresh}) => {
 
   // Deposit
   const { config } = usePrepareContractWrite({
-    address: genesisAddress,
+    address: genesisRewardPoolAddress,
     abi: GenesisABI,
     functionName: 'deposit',
     chainId: arbChainId,
@@ -90,8 +90,8 @@ const DepositButton = ({valueOrder, tokenIndex, forceRefresh}) => {
       onClick={() => writeAsync?.()  }
     >
       { 
-        depositLoading ? `Buying $ ${valueOrder +" "+tokens[tokenIndex].name}` :
-        `Deposit $ ${valueOrder+" "+tokens[tokenIndex].name}` 
+        depositLoading ? `Staking ${valueOrder +" "+tokens[tokenIndex].name}` :
+        `Deposit ${valueOrder+" "+tokens[tokenIndex].name}` 
       }
     </button>
   )
@@ -122,7 +122,7 @@ export default function DepositModal( props ) {
     abi: BUSDABI,
     functionName: 'approve',
     chainId: arbChainId,
-    args: [genesisAddress, ethers.utils.parseUnits(ValueOrder.toString() || '0', tokens[props.index].decimal)],
+    args: [genesisRewardPoolAddress, ethers.utils.parseUnits(ValueOrder.toString() || '0', tokens[props.index].decimal)],
   })
 
   const { write:approveWrite, data:approveData, isLoading:approveLoading } = useContractWrite({
@@ -163,7 +163,7 @@ export default function DepositModal( props ) {
     address: tokens[props.index].address,
     abi: BUSDABI,
     functionName: "allowance",
-    args:[address,genesisAddress],
+    args:[address,genesisRewardPoolAddress],
     // watch: true,
     onSuccess(data) {
       const read1=(data||0).toString();
@@ -188,7 +188,10 @@ export default function DepositModal( props ) {
   }
 
   return (
-    <> <button onClick={handleOpen} className="bg-black mx-2 rounded-lg py-2  text-white flex-auto ">
+    <> <button 
+      disabled={parseFloat(balance) <= 0} onClick={handleOpen} 
+      className={`bg-black mx-2 rounded-lg py-2  text-white flex-auto ${parseFloat(balance) <= 0? "cursor-not-allowed": "cursor-pointer" }`}
+    >
       Deposit
     </button>
 
@@ -248,9 +251,9 @@ export default function DepositModal( props ) {
                           />
                           <input className="flex-auto rounded-lg my-1 border-2 cursor-default"
                             type="number" // change the type to "number"
-                            style={{ maxWidth : "35%",borderColor :"#000",cursor:"zoom-in" }}
+                            style={{ maxWidth : "35%",borderColor :"#000"}}
                             value={ValueOrder}
-                            step="0.0001" // bind the value of the input field to the same value as the slider
+                            step="0.001" // bind the value of the input field to the same value as the slider
                             max={(ethers.utils.formatUnits(balance,tokens[props.index].decimal))}
                             onChange={(event) => {
                               setValueOrder(event.target.value); // update the value of the slider when the input field value changes
@@ -272,15 +275,16 @@ export default function DepositModal( props ) {
                   </div>
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     {
-                      (ethers.utils.formatUnits(allowance,tokens[props.index].decimal) < ValueOrder)?
+                      (ValueOrder <= 0 || ethers.utils.formatUnits(allowance,tokens[props.index].decimal) < ValueOrder)?
                       <button
                         type="button"
-                        className=" inline-flex w-full justify-center rounded-md  bg-gradient-to-b from-black via-gray-800 to-gray-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:from-white hover:to-gray-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 sm:col-start-2 sm:text-sm hover:scale-110 hover:text-black transition duration-300 ease-in-out"
+                        disabled={ValueOrder <= 0}
+                        className={`${ValueOrder <=0? "cursor-not-allowed": "cursor-pointer"} inline-flex w-full justify-center rounded-md  bg-gradient-to-b from-black via-gray-800 to-gray-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:from-white hover:to-gray-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 sm:col-start-2 sm:text-sm hover:scale-110 hover:text-black transition duration-300 ease-in-out`}
                         onClick={() => approveHandle?.()  }
                       >
                         { 
                           approveLoading ? `Waiting for approval` :
-                          `Approve $ ${ValueOrder+" "+tokens[props.index].name}` 
+                          `Approve ${ValueOrder+" "+tokens[props.index].name}` 
                         }
                       </button>
                       : <DepositButton valueOrder={ValueOrder} tokenIndex={props.index} forceRefresh={props.forceRefresh} />

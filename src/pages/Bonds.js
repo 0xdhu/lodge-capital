@@ -41,7 +41,7 @@ const people1 = [
   { name: "USDC" },
   { name: "DAI" },
 ];
-export default function Zapper() {
+export default function Bonds() {
   const [selected, setSelected] = useState(people[0]);
   const [selected1, setSelected1] = useState(people1[0]);
   return (
