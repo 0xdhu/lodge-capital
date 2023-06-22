@@ -86,8 +86,21 @@ const commonPriceLatestAnswerConfig = {
   chainId: arbChainId
 }
 
-export default function Genesis() {
+const HrText = ({content}) => {
+  return (
+    <div className="flex flex-row items-center gap-x-2 w-full mx-auto justify-between max-w-7xl mt-2">
+      <hr class="border-1 border-white w-24" />
+      <div className="text-white text-lg">{content}</div>
+      <hr class="w-full border-1 border-white" />
+    </div>
+  )
+}
+export default function FarmLands() {
   const {refreshCount} = useRefreshHook(120000);
+  // const {refreshCount: farmlandMonitor} = useRefreshHook(10000);
+
+  // FarmLand start time check.
+  const [farmLandStarted, setFarmLandStarted] = useState(false);
 
   const [totalGenesisAllocation, setTotalGenesisAllocation] = useState(0);
   const [totalFarmLandAllocation, setTotalFarmAllocation] = useState(0);
@@ -124,19 +137,25 @@ export default function Genesis() {
   //   },
   // });
 
-  // const { refetch: lodgePriceReadRefetch } = useContractRead({
-  //   address: boardRoomAddress,
-  //   abi: BoardRoomABI,
-  //   functionName: "getNativePrice",
-  //   chainId: arbChainId,
-  //   onSuccess(lodgePriceData) {
-  //     const read19 = (lodgePriceData || 0).toString();
-  //     const newLevelPriceInETH = ethers.utils.formatEther(read19);
-  //     if (levelPriceInETH !== newLevelPriceInETH) {
-  //       setLevelPriceInETH(newLevelPriceInETH);
-  //     }
-  //   },
-  // });
+  const { refetch: farmLandEpochStartTimeRefetch } = useContractRead({
+    address: shareRewardPoolAddress,
+    abi: ShareRewardPoolABI,
+    functionName: "poolStartTime",
+    chainId: arbChainId,
+    onSuccess(data) {
+      const poolStartTime = parseFloat(data || 0).toString();
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      const _poolstarted = currentTimestamp >= poolStartTime;
+      console.log("FarmLand monitor", _poolstarted)
+      if (farmLandStarted !== _poolstarted) {
+        setFarmLandStarted(_poolstarted);
+      }
+    },
+  });
+
+  useEffect(() => {
+    farmLandEpochStartTimeRefetch();
+  }, [refreshCount])
 
   const { refetch: ethPriceReadRefetch } = useContractRead({
     ...commonPriceLatestAnswerConfig,
@@ -341,136 +360,143 @@ export default function Genesis() {
           lodgePriceInEth={lodgePriceInETH}
           ethPrice={ethPrice}
         />
-        <GenesisPool // WETH
-          refresh={refreshCount}
-          tokenName={"WETH"}
-          tokenAddress={wethTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={WETH_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={ethPrice}
-        />
-        <GenesisPool // Sushi
-          refresh={refreshCount}
-          tokenName={"SUSHI"}
-          tokenAddress={sushiTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908734670147644/sSUSHI.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={SUSHI_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={sushiPrice}
-        />
-        <GenesisPool // Arbitrum
-          refresh={refreshCount}
-          tokenName={"ARB"}
-          tokenAddress={arbTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105909574810222773/sARB.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={ARB_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={arbPrice}
-        />
-        <GenesisPool // USDC
-          refresh={refreshCount}
-          tokenName={"USDC"}
-          tokenAddress={usdcTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908735139917977/sUSDC.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={USDC_INDEX}
-          tokenDecimal={6}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={1}
-        />
-        <GenesisPool // USDT
-          refresh={refreshCount}
-          tokenName={"USDT"}
-          tokenAddress={usdtTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908735794225262/sUSDT.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={USDT_INDEX}
-          tokenDecimal={6}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={1}
-        />
-        <GenesisPool // DAI
-          refresh={refreshCount}
-          tokenName={"DAI"}
-          tokenAddress={daiTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908731708977272/sDAI.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={DAI_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={1}
-        />
+        { farmLandStarted && <div>
+          <HrText content={"FarmLands"} />
+          {/* FarmLand */}
+          <FarmLandPool // ETH/LEVEL
+            refresh={refreshCount}
+            tokenName={"ETH/LEVEL"}
+            tokenAddress={ethLevelLpTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
+            lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+            nativePrice={lodgePriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={FarmLand_ETHLEVEL_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalFarmLandAllocation}
+            tokenPrice={ethLevelLpPrice}
+          />
 
-        <GenesisPool // ETH/LEVEL
-          refresh={refreshCount}
-          tokenName={"ETH/LEVEL"}
-          tokenAddress={ethLevelLpTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
-          lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
-          nativePrice={levelPriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={ETHLEVEL_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalGenesisAllocation}
-          tokenPrice={ethLevelLpPrice}
-        />
+          {/* FarmLand */}
+          <FarmLandPool // ETH/LODGE
+            refresh={refreshCount}
+            tokenName={"ETH/LODGE"}
+            tokenAddress={ethLodgeLpTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
+            lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+            nativePrice={lodgePriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={ETHLODGE_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalFarmLandAllocation}
+            tokenPrice={ethLodgeLpPrice}
+          />
 
-        {/* FarmLand */}
-        <FarmLandPool // ETH/LEVEL
-          refresh={refreshCount}
-          tokenName={"ETH/LEVEL"}
-          tokenAddress={ethLevelLpTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
-          lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
-          nativePrice={lodgePriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={FarmLand_ETHLEVEL_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalFarmLandAllocation}
-          tokenPrice={ethLevelLpPrice}
-        />
+          {/* FarmLand */}
+          <FarmLandPool // LEVEL
+            refresh={refreshCount}
+            tokenName={"LEVEL"}
+            tokenAddress={levelTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+            nativePrice={lodgePriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={LEVEL_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalFarmLandAllocation}
+            tokenPrice={levelPriceInETH * ethPrice}
+          />
+        </div>}
+        
+        <div>
+          <HrText content={"Genesis"} />
+          <GenesisPool // WETH
+            refresh={refreshCount}
+            tokenName={"WETH"}
+            tokenAddress={wethTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={WETH_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={ethPrice}
+          />
+          <GenesisPool // Sushi
+            refresh={refreshCount}
+            tokenName={"SUSHI"}
+            tokenAddress={sushiTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908734670147644/sSUSHI.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={SUSHI_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={sushiPrice}
+          />
+          <GenesisPool // Arbitrum
+            refresh={refreshCount}
+            tokenName={"ARB"}
+            tokenAddress={arbTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105909574810222773/sARB.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={ARB_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={arbPrice}
+          />
+          <GenesisPool // USDC
+            refresh={refreshCount}
+            tokenName={"USDC"}
+            tokenAddress={usdcTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908735139917977/sUSDC.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={USDC_INDEX}
+            tokenDecimal={6}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={1}
+          />
+          <GenesisPool // USDT
+            refresh={refreshCount}
+            tokenName={"USDT"}
+            tokenAddress={usdtTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908735794225262/sUSDT.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={USDT_INDEX}
+            tokenDecimal={6}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={1}
+          />
+          <GenesisPool // DAI
+            refresh={refreshCount}
+            tokenName={"DAI"}
+            tokenAddress={daiTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908731708977272/sDAI.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={DAI_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={1}
+          />
 
-        {/* FarmLand */}
-        <FarmLandPool // ETH/LODGE
-          refresh={refreshCount}
-          tokenName={"ETH/LODGE"}
-          tokenAddress={ethLodgeLpTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
-          lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
-          nativePrice={lodgePriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={ETHLODGE_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalFarmLandAllocation}
-          tokenPrice={ethLodgeLpPrice}
-        />
-
-        {/* FarmLand */}
-        <FarmLandPool // LEVEL
-          refresh={refreshCount}
-          tokenName={"LEVEL"}
-          tokenAddress={levelTokenAddress}
-          gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
-          nativePrice={lodgePriceInETH}
-          ethPrice={ethPrice}
-          tokenIndex={LEVEL_INDEX}
-          tokenDecimal={18}
-          totalAllocation={totalFarmLandAllocation}
-          tokenPrice={levelPriceInETH * ethPrice}
-        />
+          <GenesisPool // ETH/LEVEL
+            refresh={refreshCount}
+            tokenName={"ETH/LEVEL"}
+            tokenAddress={ethLevelLpTokenAddress}
+            gifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732245844109/sETH.gif"}
+            lpGifIcon={"https://cdn.discordapp.com/attachments/943951700379721740/1105908732669472858/sLEVEL.gif"}
+            nativePrice={levelPriceInETH}
+            ethPrice={ethPrice}
+            tokenIndex={ETHLEVEL_INDEX}
+            tokenDecimal={18}
+            totalAllocation={totalGenesisAllocation}
+            tokenPrice={ethLevelLpPrice}
+          />
+        </div>
+        
         <span> {"   "}</span>
         <span> {"   "}</span>
         <span> {"   "}</span>

@@ -93,7 +93,7 @@ const FarmLandPool = ({
         ...commonPendingReadConfig,
         args: [tokenIndex, address || DeadAddress],
         onSuccess: (pendingData) => {
-            const read1 = (pendingData[0] || 0).toString();
+            const read1 = (pendingData || 0).toString();
             const newPendingToken = ethers.utils.formatUnits(read1, tokenDecimal);
             if (pendingToken !== newPendingToken) {
                 setPendingToken(newPendingToken);
